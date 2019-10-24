@@ -19,8 +19,6 @@ const ButtonList = styled.button`
       border: 2px solid #97B0BF ;
       border-radius: 3px;
       ${(props) => (props.active ? "background: #97B0BF" : "background: #fff")};
-      
-      
     `
 
 
