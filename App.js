@@ -3,14 +3,18 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import reducer from './reducer'
+
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 // import queryString from 'query-string'
-// import { call, put, takeEvery } from 'redux-saga/effects'
 import {
     BrowserRouter as Router,
     Link
 } from "react-router-dom";
 import StyledButton from './common/StyledButton'
+
+
 
 class App extends Component {
     constructor(props) {
@@ -99,7 +103,10 @@ class App extends Component {
                             <Form.Label>Search field by name</Form.Label>
                             <Link to={this.state.input}><Form.Control value={this.state.input} type="text"
                                           placeholder="Type here you're looking for"
-                                          onChange={this.onChangeHandler.bind(this)}/>
+                                          // onChange={this.onChangeHandler.bind(this)}
+                                          onChange={this.props.dispatch(reducer.fetchProduct())}
+
+                            />
                             </Link>
                         </Form.Group>
                         <ul>{list}</ul>
@@ -129,5 +136,4 @@ class App extends Component {
 }
 
 export default App;
-
 
