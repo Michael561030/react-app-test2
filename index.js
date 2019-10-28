@@ -12,7 +12,6 @@ ReactDOM.render((
 
     <Router>
         <Route path='/' component={App}/>
-        {/*<Route path='/All' component={App}/>*/}
         {/*<Route path='/home&kitchen' component={App}/>*/}
         {/*<Route path='/sports&outdoors' component={App}/>*/}
         {/*<Route path='/health&personalcare' component={App}/>*/}
