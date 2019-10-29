@@ -20,9 +20,8 @@ const store = createStore(
         applyMiddleware(sagaMiddleware)
     )
 );
-
+debugger;
 sagaMiddleware.run(watchRequest);
-
 
 ReactDOM.render(
     <Provider store={store}>
@@ -31,11 +30,6 @@ ReactDOM.render(
         </Router>
     </Provider>
     , document.getElementById('root'));
-
-
-{/*<Provider store={store}><App store={store}/></Provider>*/
-}
-
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

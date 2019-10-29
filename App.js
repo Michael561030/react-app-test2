@@ -6,16 +6,14 @@ import Col from 'react-bootstrap/Col';
 import reducer from './reducer'
 import {connect} from 'react-redux';
 import {requestProduct} from './reducer';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import * as getData from './reducer'
 // import queryString from 'query-string'
 import {
     BrowserRouter as Router,
     Link
 } from "react-router-dom";
 import StyledButton from './common/StyledButton'
-
 
 
 class App extends Component {
@@ -43,7 +41,7 @@ class App extends Component {
     }
 
     render() {
-
+        const {products} = this.props;
         let list = this.state.products.filter((item, i, arr) => {
             return (this.state.input === '' || item.brand.toLowerCase().includes(this.state.input.toLowerCase()))
                 && (this.state.category === '' || this.state.category === 'all' || item.bsr_category.toLowerCase().replace(/\s/g, "").includes(this.state.category.toLowerCase()))
@@ -63,11 +61,13 @@ class App extends Component {
             let result;
             result = item === 'All' ?
                 <Link to={'all'}>
-                    <StyledButton active={category === 'all'} item={'All'} onClick={this.reset.bind(this)}>All</StyledButton>
-                </Link>:
+                    <StyledButton active={category === 'all'} item={'All'}
+                                  onClick={this.reset.bind(this)}>All</StyledButton>
+                </Link> :
                 <Link to={item.replace(/\s/g, "")}>
-                    <StyledButton active={category === item.replace(/\s/g, "")} key={index} type="button" variant="primary" value={item}
-                                onClick={this.handleChange.bind(this)}>
+                    <StyledButton active={category === item.replace(/\s/g, "")} key={index} type="button"
+                                  variant="primary" value={item}
+                                  onClick={this.handleChange.bind(this)}>
                         {item}
                     </StyledButton>
                 </Link>
@@ -86,8 +86,8 @@ class App extends Component {
                         <Form.Group controlId="searchField">
                             <Form.Label>Search field by name</Form.Label>
                             <Link to={this.state.input}><Form.Control value={this.state.input} type="text"
-                                          placeholder="Type here you're looking for"
-                                          onChange={this.onChangeHandler.bind(this)}
+                                                                      placeholder="Type here you're looking for"
+                                                                      onChange={this.onChangeHandler.bind(this)}
 
                             />
                             </Link>
@@ -118,16 +118,14 @@ class App extends Component {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = state => ({
+    loading: state.loading,
+    products: getData.getProducts(state)
+})
 
-    return {
-        loading: state.loading,
-    }
-}
 
 const mapDispatchToProps = dispatch => ({
     loadProducts: () => dispatch(requestProduct())
 });
-
 export default connect(mapStateToProps, mapDispatchToProps)(App);
 

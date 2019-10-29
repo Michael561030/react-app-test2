@@ -8,10 +8,9 @@ const LOAD_FAILURE = 'LOAD_FAILURE';
 const LOAD_REQUEST = 'LOAD_REQUEST';
 
 const initialState = {
-    data: null,
+    products: null,
     loading: false,
     error: null,
-    products: [],
 };
 
 // Reducer
@@ -22,42 +21,46 @@ export default function reducer(state = initialState, action) {
                 ...state,
                 loading: true,
                 error: null,
-                search: null
             };
         case LOAD_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                data: action.payload ? action.payload.map(product => product.brand.toLowerCase()) : null,
+                products: action.payload ? action.payload : null,
                 error: null
             };
         case LOAD_FAILURE:
             return {
                 ...state,
                 loading: false,
-                error: action.error,
-                data: null
+                products: null,
+                error: action.error
+
             };
         default:
             return state;
     }
 }
 
+
 // Saga
  function* fetchProductsSaga() {
     debugger;
     try {
         yield put(requestForProducts());
-        const data = yield call(() => {
+        const products = yield call(() => {
                 return fetch("http://demo1656942.mockable.io/products.json")
                     .then(res => res.json())
             }
         );
-        yield put(requestProductSuccess(data));
+        yield put(requestProductSuccess(products));
     } catch (error) {
         yield put(requestProductError());
     }
 }
+
+
+
 
 // Action Creators
 export const requestProduct = () => {
@@ -69,18 +72,25 @@ const requestForProducts = () => ({
 });
 
 
-const requestProductSuccess = (data) => {
-    return { type: 'LOAD_SUCCESS', payload: data.hasOwnProperty('products') && data.products}
+
+const requestProductSuccess = (products) => {
+    return { type: 'LOAD_SUCCESS', payload: products.hasOwnProperty('products')
+        && products.products
+
+    }
 };
+
+export const getProducts = products => products.products;
+
 
 const requestProductError = () => {
     return { type: 'LOAD_FAILURE' }
 };
 
-
 export function* watchRequest() {
     yield takeLatest(LOAD_PRODUCT_ASYNC, fetchProductsSaga);
 }
+
 
 
 
