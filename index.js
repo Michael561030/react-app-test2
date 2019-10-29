@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import {createStore, applyMiddleware} from 'redux';
+import { Provider } from 'react-redux'
 import * as serviceWorker from './serviceWorker';
-import createSagaMiddleware from 'redux-saga'
-import Provider from 'redux-saga'
+import createSagaMiddleware from 'redux-saga';
 import reducer, {watchRequest} from './reducer'
+import {composeWithDevTools} from 'redux-devtools-extension';
 import {
     BrowserRouter as Router,
     Route
@@ -15,19 +16,25 @@ import {
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(
     reducer,
-    applyMiddleware(sagaMiddleware));
+    composeWithDevTools(
+        applyMiddleware(sagaMiddleware)
+    )
+);
+
 sagaMiddleware.run(watchRequest);
 
-const action = type => store.dispatch({type});
 
-ReactDOM.render((
-    <Provider store={store}><App store={store}/></Provider>
-    // <Router>
-    //     <Route path='/' component={App}/>
-    // </Router>
-), document.getElementById('root'));
+ReactDOM.render(
+    <Provider store={store}>
+        <Router>
+            <Route path='/' component={App}/>
+        </Router>
+    </Provider>
+    , document.getElementById('root'));
 
 
+{/*<Provider store={store}><App store={store}/></Provider>*/
+}
 
 
 // If you want your app to work offline and load faster, you can change

@@ -5,6 +5,7 @@ import {takeLatest, put, call} from 'redux-saga/effects'
 const LOAD_PRODUCT_ASYNC = 'LOAD_PRODUCT_ASYNC';
 const LOAD_SUCCESS = 'LOAD_SUCCESS';
 const LOAD_FAILURE = 'LOAD_FAILURE';
+const LOAD_REQUEST = 'LOAD_REQUEST';
 
 const initialState = {
     data: null,
@@ -16,7 +17,7 @@ const initialState = {
 // Reducer
 export default function reducer(state = initialState, action) {
     switch (action.type) {
-        case LOAD_PRODUCT_ASYNC:
+        case LOAD_REQUEST:
             return {
                 ...state,
                 loading: true,
@@ -27,7 +28,7 @@ export default function reducer(state = initialState, action) {
             return {
                 ...state,
                 loading: false,
-                data: action.data !== undefined ? action.data : null,
+                data: action.payload ? action.payload.map(product => product.brand.toLowerCase()) : null,
                 error: null
             };
         case LOAD_FAILURE:
@@ -46,13 +47,12 @@ export default function reducer(state = initialState, action) {
  function* fetchProductsSaga() {
     debugger;
     try {
-        yield put(requestProduct());
+        yield put(requestForProducts());
         const data = yield call(() => {
                 return fetch("http://demo1656942.mockable.io/products.json")
                     .then(res => res.json())
             }
         );
-        debugger;
         yield put(requestProductSuccess(data));
     } catch (error) {
         yield put(requestProductError());
@@ -60,29 +60,38 @@ export default function reducer(state = initialState, action) {
 }
 
 // Action Creators
-const requestProduct = () => {
-    return { type: 'REQUESTED_PRODUCT' }
+export const requestProduct = () => {
+    return { type: 'LOAD_PRODUCT_ASYNC' }
 };
 
+const requestForProducts = () => ({
+    type: LOAD_REQUEST
+});
+
+
 const requestProductSuccess = (data) => {
-    return { type: 'REQUESTED_PRODUCT_SUCCEEDED', url: data.message }
+    return { type: 'LOAD_SUCCESS', payload: data.hasOwnProperty('products') && data.products}
 };
 
 const requestProductError = () => {
-    return { type: 'REQUESTED_PRODUCT_FAILED' }
+    return { type: 'LOAD_FAILURE' }
 };
-
-const fetchProduct = () => {
-    return { type: 'FETCHED_PRODUCT' }
-};
-
-
 
 
 export function* watchRequest() {
-    debugger;
     yield takeLatest(LOAD_PRODUCT_ASYNC, fetchProductsSaga);
 }
 
 
 
+
+
+
+
+
+
+
+
+// const watchFetchProduct = () => {
+//     return { type: 'FETCHED_PRODUCT' }
+// };

@@ -4,6 +4,8 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import reducer from './reducer'
+import {connect} from 'react-redux';
+import {requestProduct} from './reducer';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -30,32 +32,14 @@ class App extends Component {
     }
 
     componentDidMount() {
+
+        this.props.loadProducts();
+
         let currentLocation = this.props.location.pathname.replace('/', '');
         this.setState({
             category: currentLocation,
             input: currentLocation
         })
-
-        fetch("http://demo1656942.mockable.io/products.json")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    const categoryList = result.products
-                        .map(product => product.bsr_category.toLowerCase())
-                        .filter((item, pos, self) => self.indexOf(item) === pos)
-                    this.setState({
-                        isLoaded: true,
-                        products: result.products,
-                        categoryList: [...this.state.categoryList, ...categoryList]
-                    });
-                },
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error
-                    });
-                }
-            )
     }
 
     render() {
@@ -103,8 +87,7 @@ class App extends Component {
                             <Form.Label>Search field by name</Form.Label>
                             <Link to={this.state.input}><Form.Control value={this.state.input} type="text"
                                           placeholder="Type here you're looking for"
-                                          // onChange={this.onChangeHandler.bind(this)}
-                                          onChange={this.props.dispatch(reducer.fetchProduct())}
+                                          onChange={this.onChangeHandler.bind(this)}
 
                             />
                             </Link>
@@ -135,5 +118,16 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = state => {
+
+    return {
+        loading: state.loading,
+    }
+}
+
+const mapDispatchToProps = dispatch => ({
+    loadProducts: () => dispatch(requestProduct())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 
