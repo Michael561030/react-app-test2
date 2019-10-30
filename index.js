@@ -10,7 +10,8 @@ import reducer, {watchRequest} from './reducer'
 import {composeWithDevTools} from 'redux-devtools-extension';
 import {
     BrowserRouter as Router,
-    Route
+    Route,
+    Redirect
 } from "react-router-dom";
 
 const sagaMiddleware = createSagaMiddleware();
@@ -20,12 +21,12 @@ const store = createStore(
         applyMiddleware(sagaMiddleware)
     )
 );
-debugger;
 sagaMiddleware.run(watchRequest);
 
 ReactDOM.render(
     <Provider store={store}>
         <Router>
+            {/*<Redirect from='/' to='/all' />*/}
             <Route path='/' component={App}/>
         </Router>
     </Provider>

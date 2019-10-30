@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+//Styled category button
 const StyledButton = styled.button`
       font-size: 1em;
       margin: 1em;

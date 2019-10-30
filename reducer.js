@@ -45,12 +45,14 @@ export default function reducer(state = initialState, action) {
 
 // Saga
  function* fetchProductsSaga() {
-    debugger;
     try {
         yield put(requestForProducts());
         const products = yield call(() => {
                 return fetch("http://demo1656942.mockable.io/products.json")
                     .then(res => res.json())
+                    .then(
+                        (result) => (result.hasOwnProperty('products') && result.products)
+                    )
             }
         );
         yield put(requestProductSuccess(products));
@@ -58,9 +60,6 @@ export default function reducer(state = initialState, action) {
         yield put(requestProductError());
     }
 }
-
-
-
 
 // Action Creators
 export const requestProduct = () => {
@@ -74,13 +73,8 @@ const requestForProducts = () => ({
 
 
 const requestProductSuccess = (products) => {
-    return { type: 'LOAD_SUCCESS', payload: products.hasOwnProperty('products')
-        && products.products
-
-    }
+    return { type: 'LOAD_SUCCESS', payload: products    }
 };
-
-export const getProducts = products => products.products;
 
 
 const requestProductError = () => {

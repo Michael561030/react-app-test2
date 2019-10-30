@@ -3,11 +3,9 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import reducer from './reducer'
 import {connect} from 'react-redux';
 import {requestProduct} from './reducer';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import * as getData from './reducer'
 // import queryString from 'query-string'
 import {
     BrowserRouter as Router,
@@ -15,17 +13,15 @@ import {
 } from "react-router-dom";
 import StyledButton from './common/StyledButton'
 
-
+//Creating our component
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            error: null,
-            isLoaded: false,
             products: [],
             input: '',
-            categoryList: ['All'],
-            category: '',
+            category: ' ',
+            categoryList: []
         };
     }
 
@@ -33,16 +29,18 @@ class App extends Component {
 
         this.props.loadProducts();
 
+        // save location category from address bar
         let currentLocation = this.props.location.pathname.replace('/', '');
         this.setState({
             category: currentLocation,
-            input: currentLocation
         })
     }
 
     render() {
+        let currentLocation = this.props.location.pathname.replace('/', '');
         const {products} = this.props;
-        let list = this.state.products.filter((item, i, arr) => {
+        //Displayed each item as these fields: name, price, category, image
+        let list = products && products.filter((item, i, arr) => {
             return (this.state.input === '' || item.brand.toLowerCase().includes(this.state.input.toLowerCase()))
                 && (this.state.category === '' || this.state.category === 'all' || item.bsr_category.toLowerCase().replace(/\s/g, "").includes(this.state.category.toLowerCase()))
         }).map((d, index) => (<li key={index}>
@@ -55,25 +53,34 @@ class App extends Component {
             </li>
         ));
 
-        const {categoryList, category} = this.state;
+        const {category} = this.props;
+        //filtering list of our items & find uniqe category therefore displayed them as buttons
+        let categoryList = products && products
+            .map(product => product.bsr_category.toLowerCase())
+            .filter((item, pos, self) => self.indexOf(item) === pos)
 
-        let mappedCategoryList = categoryList.map((item, index) => {
-            let result;
-            result = item === 'All' ?
-                <Link to={'all'}>
-                    <StyledButton active={category === 'all'} item={'All'}
-                                  onClick={this.reset.bind(this)}>All</StyledButton>
-                </Link> :
-                <Link to={item.replace(/\s/g, "")}>
-                    <StyledButton active={category === item.replace(/\s/g, "")} key={index} type="button"
-                                  variant="primary" value={item}
-                                  onClick={this.handleChange.bind(this)}>
-                        {item}
-                    </StyledButton>
-                </Link>
-            return result
-        })
+        //Adding another one button in the beginning which will display all products
+        categoryList && categoryList.unshift('all')
+
+        //Displaying each item as button
+        let mappedCategoryList = categoryList && categoryList.map((item, index) => {
+                let result;
+                result = item === 'all' ?
+                    <Link to={'all'}>
+                        <StyledButton active={category === 'all'} item={'all'}
+                                      onClick={this.reset.bind(this)}>all</StyledButton>
+                    </Link> :
+                    <Link to={item.replace(/\s/g, "")}>
+                        <StyledButton active={category === item.replace(/\s/g, "")} key={index} type="button"
+                                      variant="primary" value={item}
+                                      onClick={this.handleChange.bind(this)}>
+                            {item}
+                        </StyledButton>
+                    </Link>
+                return result
+            })
         return (
+            //Displaying our layout
             (<Container>
                 <Row>
                     <Col xs={4} sm={4} md={3} lg={3}>
@@ -85,7 +92,7 @@ class App extends Component {
                     <Col xs={5} sm={8} md={9} lg={9}>
                         <Form.Group controlId="searchField">
                             <Form.Label>Search field by name</Form.Label>
-                            <Link to={this.state.input}><Form.Control value={this.state.input} type="text"
+                            <Link to={currentLocation +this.state.input}><Form.Control value={this.state.input} type="text"
                                                                       placeholder="Type here you're looking for"
                                                                       onChange={this.onChangeHandler.bind(this)}
 
@@ -98,19 +105,19 @@ class App extends Component {
             </Container>)
         );
     }
-
+    //function which set new state of input field
     onChangeHandler(e) {
         this.setState({
             input: e.target.value
         })
     }
-
+    //function which set new state of category
     handleChange(e) {
         this.setState({
             category: e.target.value.replace(/\s/g, "")
         });
     }
-
+    //function which reset filter & display all items
     reset(e) {
         this.setState({
             category: 'all'
@@ -120,10 +127,11 @@ class App extends Component {
 
 const mapStateToProps = state => ({
     loading: state.loading,
-    products: getData.getProducts(state)
+    products: state.products,
+    categoryList: state.categoryList
 })
 
-
+//Connect Redux
 const mapDispatchToProps = dispatch => ({
     loadProducts: () => dispatch(requestProduct())
 });
