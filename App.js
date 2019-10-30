@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
-import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import InputGroup from 'react-bootstrap/InputGroup'
 import {connect} from 'react-redux';
+import Button from 'react-bootstrap/Button'
+import FormLabel from 'react-bootstrap/FormLabel'
+import FormGroup from 'react-bootstrap/FormGroup'
 import {requestProduct} from './reducer';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import FormControl from 'react-bootstrap/FormControl'
 // import queryString from 'query-string'
 import {
     BrowserRouter as Router,
@@ -27,17 +31,22 @@ class App extends Component {
 
     componentDidMount() {
 
-        this.props.loadProducts();
+        console.log(this.props.loadProducts());
 
         // save location category from address bar
         let currentLocation = this.props.location.pathname.replace('/', '');
         this.setState({
             category: currentLocation,
         })
+
     }
 
     render() {
         let currentLocation = this.props.location.pathname.replace('/', '');
+        // this.props.history.push({
+        //         pathname: currentLocation,
+        //         search: this.state.input
+        //     })
         const {products} = this.props;
         //Displayed each item as these fields: name, price, category, image
         let list = products && products.filter((item, i, arr) => {
@@ -64,21 +73,24 @@ class App extends Component {
 
         //Displaying each item as button
         let mappedCategoryList = categoryList && categoryList.map((item, index) => {
-                let result;
-                result = item === 'all' ?
-                    <Link to={'all'}>
-                        <StyledButton active={category === 'all'} item={'all'}
-                                      onClick={this.reset.bind(this)}>all</StyledButton>
-                    </Link> :
-                    <Link to={item.replace(/\s/g, "")}>
-                        <StyledButton active={category === item.replace(/\s/g, "")} key={index} type="button"
-                                      variant="primary" value={item}
-                                      onClick={this.handleChange.bind(this)}>
-                            {item}
-                        </StyledButton>
-                    </Link>
-                return result
-            })
+            let result;
+            result = item === 'all' ?
+                <Link to={'all'}>
+                    <StyledButton active={category === 'all'}
+                                  item={'all'}
+                                  onClick={this.reset.bind(this)}>all</StyledButton>
+                </Link> :
+                <Link to={item.replace(/\s/g, "")}>
+                    <StyledButton active={category === item.replace(/\s/g, "")}
+                                  key={index}
+                                  type="button"
+                                  value={item}
+                                  onClick={this.handleChange.bind(this)}>
+                        {item}
+                    </StyledButton>
+                </Link>
+            return result
+        })
         return (
             //Displaying our layout
             (<Container>
@@ -90,38 +102,59 @@ class App extends Component {
                         </Col>
                     </Col>
                     <Col xs={5} sm={8} md={9} lg={9}>
-                        <Form.Group controlId="searchField">
-                            <Form.Label>Search field by name</Form.Label>
-                            <Link to={currentLocation +this.state.input}><Form.Control value={this.state.input} type="text"
-                                                                      placeholder="Type here you're looking for"
-                                                                      onChange={this.onChangeHandler.bind(this)}
 
-                            />
-                            </Link>
-                        </Form.Group>
+                        <FormGroup controlId="searchField">
+                            <FormLabel>Search field by name</FormLabel>
+                            <InputGroup className="mb-0">
+                                <Link to={currentLocation}>
+                                    <FormControl
+                                        value={this.state.input}
+                                        type="text"
+                                        placeholder="Type here you're looking for"
+                                        onChange={this.onChangeHandler.bind(this)}
+                                    />
+                                </Link>
+                                <InputGroup.Append>
+                                    <Button variant="outline-secondary"
+                                            onClick={this.resetField.bind(this)}>Clear field
+                                    </Button>
+                                </InputGroup.Append>
+                            </InputGroup>
+                        </FormGroup>
+
+
                         <ul>{list}</ul>
                     </Col>
                 </Row>
             </Container>)
         );
     }
+
     //function which set new state of input field
     onChangeHandler(e) {
         this.setState({
             input: e.target.value
         })
     }
+
     //function which set new state of category
     handleChange(e) {
         this.setState({
             category: e.target.value.replace(/\s/g, "")
         });
     }
+
     //function which reset filter & display all items
     reset(e) {
         this.setState({
             category: 'all'
         });
+    }
+
+    resetField(e) {
+        this.setState({
+            input: ''
+        })
     }
 }
 

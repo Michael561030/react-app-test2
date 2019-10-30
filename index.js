@@ -27,7 +27,9 @@ ReactDOM.render(
     <Provider store={store}>
         <Router>
             {/*<Redirect from='/' to='/all' />*/}
-            <Route path='/' component={App}/>
+            <Route path='/' component={App}>
+                {/*<Route path={'/'} component={App}/>*/}
+            </Route>
         </Router>
     </Provider>
     , document.getElementById('root'));
