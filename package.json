@@ -1,0 +1,49 @@
+{
+  "name": "my-react",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "awesome-debounce-promise": "^2.1.0",
+    "bootstrap": "^4.3.1",
+    "eslint": "^6.0.0-rc.0",
+    "react": "^16.10.1",
+    "react-bootstrap": "^1.0.0-beta.14",
+    "react-dom": "^16.10.1",
+    "react-filter-search": "^1.0.8",
+    "react-history": "^0.18.2",
+    "react-redux": "^7.1.0",
+    "react-router-dom": "^5.1.2",
+    "react-router-query-params": "^1.0.3",
+    "react-scripts": "3.1.2",
+    "redux": "^4.0.4",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-saga": "^1.1.1",
+    "save": "^2.4.0",
+    "styled-components": "^4.4.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "babel-plugin-styled-components": "^1.10.6",
+    "mixitup": "^3.3.1"
+  }
+}
